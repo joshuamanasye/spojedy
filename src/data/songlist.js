@@ -1,31 +1,59 @@
+/* Song data — cover images served from Unsplash CDN (imgix), audio from SoundHelix CDN */
 export const songs = [
   {
     id: 1,
     title: 'Afterlife',
     artist: 'Avenged Sevenfold',
-
-    cover:
-      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800',
-
-    audio:
-      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-
-    video:
-      'https://www.w3schools.com/html/mov_bbb.mp4',
+    cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    video: 'https://www.w3schools.com/html/mov_bbb.mp4',
   },
-
   {
     id: 2,
     title: 'Numb',
     artist: 'Linkin Park',
-
-    cover:
-      'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800',
-
-    audio:
-      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-
-    video:
-      'https://www.w3schools.com/html/movie.mp4',
+    cover: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    video: 'https://www.w3schools.com/html/movie.mp4',
+  },
+  {
+    id: 3,
+    title: 'Blinding Lights',
+    artist: 'The Weeknd',
+    cover: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    video: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  },
+  {
+    id: 4,
+    title: 'Levitating',
+    artist: 'Dua Lipa',
+    cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+    video: 'https://www.w3schools.com/html/movie.mp4',
+  },
+  {
+    id: 5,
+    title: 'Bohemian Rhapsody',
+    artist: 'Queen',
+    cover: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+    video: 'https://www.w3schools.com/html/mov_bbb.mp4',
+  },
+  {
+    id: 6,
+    title: 'Smells Like Teen Spirit',
+    artist: 'Nirvana',
+    cover: 'https://images.unsplash.com/photo-1498038432885-c6f3f1b912ee?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+    video: 'https://www.w3schools.com/html/movie.mp4',
+  },
+  {
+    id: 7,
+    title: 'Bad Guy',
+    artist: 'Billie Eilish',
+    cover: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop',
+    audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+    video: 'https://www.w3schools.com/html/mov_bbb.mp4',
   },
 ]

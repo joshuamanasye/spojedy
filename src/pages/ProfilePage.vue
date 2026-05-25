@@ -1,65 +1,25 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-
 import imageCompression from 'browser-image-compression'
-
 import ComponentNavbar from '../components/ComponentNavbar.vue'
 
-const username = ref('Clement')
-
+const username = ref('User')
 const profileImage = ref(
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300'
+  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=300&auto=format&fit=crop'
 )
-
-const theme = ref('dark')
-
+const theme = ref('light')
 const loading = ref(false)
+const saved = ref(false)
 
 onMounted(() => {
-  const savedUsername =
-    localStorage.getItem('username')
-
-  const savedTheme =
-    localStorage.getItem('theme')
-
-  const savedImage =
-    localStorage.getItem('profileImage')
-
-  if (savedUsername) {
-    username.value = savedUsername
-  }
-
-  if (savedTheme) {
-    theme.value = savedTheme
-  }
-
-  if (savedImage) {
-    profileImage.value = savedImage
-  }
-
+  const savedUsername = localStorage.getItem('username')
+  const savedTheme = localStorage.getItem('theme')
+  const savedImage = localStorage.getItem('profileImage')
+  if (savedUsername) username.value = savedUsername
+  if (savedTheme) theme.value = savedTheme
+  if (savedImage) profileImage.value = savedImage
   applyTheme()
 })
-
-const saveProfile = () => {
-  localStorage.setItem(
-    'username',
-    username.value
-  )
-
-  localStorage.setItem(
-    'theme',
-    theme.value
-  )
-
-  localStorage.setItem(
-    'profileImage',
-    profileImage.value
-  )
-
-  applyTheme()
-
-  alert('Profile Saved!')
-}
 
 const applyTheme = () => {
   if (theme.value === 'dark') {
@@ -69,119 +29,184 @@ const applyTheme = () => {
   }
 }
 
+/* Toggle without requiring save, so the preview is instant */
+const toggleTheme = () => {
+  theme.value = theme.value === 'dark' ? 'light' : 'dark'
+  applyTheme()
+}
+
+const saveProfile = () => {
+  localStorage.setItem('username', username.value)
+  localStorage.setItem('theme', theme.value)
+  localStorage.setItem('profileImage', profileImage.value)
+  applyTheme()
+  saved.value = true
+  setTimeout(() => (saved.value = false), 2200)
+}
+
+/* Compress then convert to base64 blob for localStorage */
 const uploadImage = async (event) => {
   const file = event.target.files[0]
-
   if (!file) return
-
   loading.value = true
-
-  const options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1000,
-    useWebWorker: true,
-  }
-
   try {
-    const compressedFile =
-      await imageCompression(
-        file,
-        options
-      )
-
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1000,
+      useWebWorker: true,
+    })
     const reader = new FileReader()
-
-    reader.readAsDataURL(compressedFile)
-
+    reader.readAsDataURL(compressed)
     reader.onload = () => {
       profileImage.value = reader.result
-
       loading.value = false
     }
-  } catch (error) {
-    console.log(error)
-
+  } catch {
     loading.value = false
   }
 }
 </script>
 
 <template>
-  <div
-  class="min-h-screen bg-white text-black dark:bg-black dark:text-white"
->
+  <div class="min-h-screen bg-[#F7F4EF] dark:bg-[#0D0B14] text-[#1C1917] dark:text-[#F5F3FF]">
     <ComponentNavbar />
 
-    <div
-      class="flex flex-col items-center px-6 py-12"
-    >
-      <h1 class="text-5xl font-bold mb-10">
-        Profile
-      </h1>
+    <div class="max-w-md mx-auto px-4 py-12 animate-fade-up">
+      <h1 class="text-3xl font-black mb-2">Your Profile</h1>
+      <p class="text-sm text-[#78716C] dark:text-[#9089A8] mb-10">
+        Personalise your SpoJeDy experience.
+      </p>
 
-      <!-- IMAGE -->
-      <div class="relative">
-        <img
-          v-if="!loading"
-          :src="profileImage"
-          class="w-48 h-48 rounded-full object-cover border-4 border-zinc-700"
-        />
+      <!-- ─── Avatar upload ─────────────────────────────────────────────── -->
+      <div class="flex flex-col items-center mb-10">
+        <label for="avatar-upload" class="cursor-pointer group">
+          <!-- Progressive loading state -->
+          <div
+            v-if="loading"
+            class="w-28 h-28 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center"
+          >
+            <div
+              class="w-8 h-8 rounded-full border-[3px] border-violet-500 border-t-transparent animate-spin"
+            />
+          </div>
 
-        <!-- LOADING -->
-        <div
-          v-if="loading"
-          class="w-48 h-48 rounded-full border-4 border-zinc-700 animate-pulse bg-zinc-800"
-        />
-      </div>
-
-      <!-- UPLOAD -->
-      <input
-        type="file"
-        accept="image/*"
-        @change="uploadImage"
-        class="mt-6"
-      />
-
-      <!-- USERNAME -->
-      <div class="w-full max-w-md mt-10">
-        <label class="text-zinc-400">
-          Username
+          <!-- Avatar with gradient ring -->
+          <div v-else class="relative">
+            <div class="p-[3px] rounded-full bg-gradient-to-br from-violet-500 to-pink-500">
+              <img
+                :src="profileImage"
+                alt="Profile photo"
+                class="w-28 h-28 rounded-full object-cover border-[3px] border-[#F7F4EF] dark:border-[#0D0B14]"
+              />
+            </div>
+            <!-- Camera overlay on hover -->
+            <div
+              class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="white"
+                class="w-7 h-7"
+              >
+                <path
+                  d="M12 15.2A3.2 3.2 0 0 0 15.2 12 3.2 3.2 0 0 0 12 8.8 3.2 3.2 0 0 0 8.8 12a3.2 3.2 0 0 0 3.2 3.2M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"
+                />
+              </svg>
+            </div>
+          </div>
         </label>
 
         <input
-          v-model="username"
-          type="text"
-          class="w-full mt-2 bg-zinc-900 p-4 rounded-lg outline-none"
+          id="avatar-upload"
+          type="file"
+          accept="image/*"
+          class="sr-only"
+          @change="uploadImage"
         />
+        <p class="text-xs text-[#78716C] dark:text-[#9089A8] mt-3">
+          Click to upload · max 1 MB
+        </p>
       </div>
 
-      <!-- THEME -->
-      <div class="w-full max-w-md mt-8">
-        <label class="text-zinc-400">
-          Theme
-        </label>
+      <!-- ─── Form ─────────────────────────────────────────────────────── -->
+      <div class="space-y-4">
+        <!-- Username input -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">Username</label>
+          <input
+            v-model="username"
+            type="text"
+            placeholder="Enter your username"
+            class="w-full bg-white dark:bg-[#18152A] border border-black/8 dark:border-white/8 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-500 dark:focus:border-violet-400 placeholder-[#78716C] dark:placeholder-[#9089A8] transition"
+          />
+        </div>
 
-        <select
-          v-model="theme"
-          class="w-full mt-2 bg-zinc-900 p-4 rounded-lg outline-none"
+        <!-- Theme toggle card -->
+        <div
+          class="flex items-center justify-between bg-white dark:bg-[#18152A] border border-black/8 dark:border-white/8 rounded-xl px-4 py-4"
         >
-          <option value="dark">
-            Dark Mode
-          </option>
+          <div>
+            <p class="text-sm font-semibold">
+              {{ theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode' }}
+            </p>
+            <p class="text-xs text-[#78716C] dark:text-[#9089A8] mt-0.5">
+              {{ theme === 'dark' ? 'Easy on the eyes at night' : 'Crisp and clean by day' }}
+            </p>
+          </div>
 
-          <option value="light">
-            Light Mode
-          </option>
-        </select>
+          <!-- Toggle switch -->
+          <button
+            @click="toggleTheme"
+            :class="[
+              'relative w-12 h-6 rounded-full transition-all duration-300',
+              theme === 'dark' ? 'gradient-bg' : 'bg-black/15 dark:bg-white/15',
+            ]"
+            role="switch"
+            :aria-checked="theme === 'dark'"
+          >
+            <span
+              :class="[
+                'absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow transition-all duration-300',
+                theme === 'dark' ? 'left-[26px]' : 'left-[3px]',
+              ]"
+            />
+          </button>
+        </div>
+
+        <!-- Save button -->
+        <button
+          @click="saveProfile"
+          :class="[
+            'w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-2 transition-all duration-300',
+            saved
+              ? 'bg-emerald-500 scale-[0.99]'
+              : 'gradient-bg hover:opacity-90 hover:scale-[1.01] shadow-lg shadow-violet-500/20',
+          ]"
+        >
+          <svg
+            v-if="saved"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-5 h-5"
+          >
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+          </svg>
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="w-5 h-5"
+          >
+            <path
+              d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
+            />
+          </svg>
+          {{ saved ? 'Saved!' : 'Save Changes' }}
+        </button>
       </div>
-
-      <!-- SAVE -->
-      <button
-        @click="saveProfile"
-        class="mt-10 bg-green-500 px-10 py-4 rounded-xl text-xl font-bold hover:bg-green-400 transition"
-      >
-        Save Profile
-      </button>
     </div>
   </div>
 </template>
