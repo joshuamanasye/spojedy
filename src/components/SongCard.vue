@@ -1,49 +1,44 @@
 <script setup>
 defineProps({
-  song: Object,
+  song:  Object,
+  index: { type: Number, default: 0 },
 })
 </script>
 
+<!-- Tracklist row — not a card -->
 <template>
-  <RouterLink :to="`/song/${song.id}`" class="group block animate-fade-up">
-    <div
-      class="bg-white dark:bg-[#18152A] rounded-2xl overflow-hidden border border-black/5 dark:border-white/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-    >
-      <!-- Cover with play overlay on hover -->
-      <div class="relative overflow-hidden aspect-square">
-        <img
-          :src="song.cover"
-          :alt="song.title"
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
-        <div
-          class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-        >
-          <div
-            class="w-13 h-13 rounded-full gradient-bg flex items-center justify-center shadow-lg scale-75 group-hover:scale-100 transition-transform duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="white"
-              class="w-6 h-6 ml-0.5"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        </div>
-      </div>
+  <RouterLink :to="`/song/${song.id}`" class="group flex items-center gap-4 px-5 py-3 border-b border-[#E2DDD4] dark:border-[#2E2B25] hover:bg-[#F2EDE3] dark:hover:bg-[#1E1C19] transition-colors">
 
-      <!-- Info -->
-      <div class="px-4 py-3">
-        <h2 class="font-bold text-[#1C1917] dark:text-[#F5F3FF] truncate text-sm">
-          {{ song.title }}
-        </h2>
-        <p class="text-xs text-[#78716C] dark:text-[#9089A8] mt-0.5 truncate">
-          {{ song.artist }}
-        </p>
-      </div>
-    </div>
+    <!-- Index / play indicator -->
+    <span class="w-5 text-right text-xs tabular-nums text-[#8A8679] dark:text-[#7A7870] shrink-0 group-hover:hidden">
+      {{ String(index + 1).padStart(2, '0') }}
+    </span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      class="w-3.5 h-3.5 text-[var(--accent)] hidden group-hover:block shrink-0"
+    >
+      <path d="M8 5v14l11-7z" />
+    </svg>
+
+    <!-- Square art — no rounding, intentional -->
+    <img
+      :src="song.cover"
+      :alt="song.title"
+      loading="lazy"
+      class="w-9 h-9 object-cover shrink-0"
+    />
+
+    <!-- Title -->
+    <p class="flex-1 min-w-0 text-sm font-semibold text-[#1A1916] dark:text-[#EDE9DF] truncate">
+      {{ song.title }}
+    </p>
+
+    <!-- Artist -->
+    <p class="hidden md:block text-xs text-[#8A8679] dark:text-[#7A7870] shrink-0 w-36 truncate">
+      {{ song.artist }}
+    </p>
+
   </RouterLink>
 </template>

@@ -3,50 +3,45 @@ import { onMounted, ref } from 'vue'
 import imageCompression from 'browser-image-compression'
 import ComponentNavbar from '../components/ComponentNavbar.vue'
 
-const username = ref('User')
+const username     = ref('User')
 const profileImage = ref(
   'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=300&auto=format&fit=crop'
 )
-const theme = ref('light')
+const theme   = ref('light')
 const loading = ref(false)
-const saved = ref(false)
+const saved   = ref(false)
 
 onMounted(() => {
-  const savedUsername = localStorage.getItem('username')
-  const savedTheme = localStorage.getItem('theme')
-  const savedImage = localStorage.getItem('profileImage')
-  if (savedUsername) username.value = savedUsername
-  if (savedTheme) theme.value = savedTheme
-  if (savedImage) profileImage.value = savedImage
+  const u   = localStorage.getItem('username')
+  const th  = localStorage.getItem('theme')
+  const img = localStorage.getItem('profileImage')
+  if (u)   username.value     = u
+  if (th)  theme.value        = th
+  if (img) profileImage.value = img
   applyTheme()
 })
 
 const applyTheme = () => {
-  if (theme.value === 'dark') {
-    document.body.classList.add('dark')
-  } else {
-    document.body.classList.remove('dark')
-  }
+  document.body.classList.toggle('dark', theme.value === 'dark')
 }
 
-/* Toggle without requiring save, so the preview is instant */
 const toggleTheme = () => {
   theme.value = theme.value === 'dark' ? 'light' : 'dark'
   applyTheme()
 }
 
 const saveProfile = () => {
-  localStorage.setItem('username', username.value)
-  localStorage.setItem('theme', theme.value)
+  localStorage.setItem('username',     username.value)
+  localStorage.setItem('theme',        theme.value)
   localStorage.setItem('profileImage', profileImage.value)
   applyTheme()
   saved.value = true
-  setTimeout(() => (saved.value = false), 2200)
+  setTimeout(() => (saved.value = false), 2000)
 }
 
-/* Compress then convert to base64 blob for localStorage */
-const uploadImage = async (event) => {
-  const file = event.target.files[0]
+/* Compress to ≤1 MB then store as base64 blob */
+const uploadImage = async (e) => {
+  const file = e.target.files[0]
   if (!file) return
   loading.value = true
   try {
@@ -68,144 +63,102 @@ const uploadImage = async (event) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F7F4EF] dark:bg-[#0D0B14] text-[#1C1917] dark:text-[#F5F3FF]">
+  <div class="min-h-screen bg-[#F9F8F4] dark:bg-[#141310] text-[#1A1916] dark:text-[#EDE9DF]">
     <ComponentNavbar />
 
-    <div class="max-w-md mx-auto px-4 py-12 animate-fade-up">
-      <h1 class="text-3xl font-black mb-2">Your Profile</h1>
-      <p class="text-sm text-[#78716C] dark:text-[#9089A8] mb-10">
-        Personalise your SpoJeDy experience.
-      </p>
+    <div class="max-w-5xl mx-auto px-5 py-10">
 
-      <!-- ─── Avatar upload ─────────────────────────────────────────────── -->
-      <div class="flex flex-col items-center mb-10">
-        <label for="avatar-upload" class="cursor-pointer group">
-          <!-- Progressive loading state -->
-          <div
-            v-if="loading"
-            class="w-28 h-28 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center"
-          >
-            <div
-              class="w-8 h-8 rounded-full border-[3px] border-violet-500 border-t-transparent animate-spin"
-            />
+      <!-- ── Page label ──────────────────────────────────────── -->
+      <h1 class="text-[2.8rem] leading-none font-black tracking-[-0.04em] mb-8">
+        Profile
+      </h1>
+
+      <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25]">
+
+        <!-- ── Avatar row ────────────────────────────────────── -->
+        <div class="flex items-center justify-between py-5 border-b border-[#E2DDD4] dark:border-[#2E2B25]">
+          <div>
+            <p class="text-xs font-bold tracking-[0.12em] uppercase text-[#8A8679] dark:text-[#7A7870]">
+              Photo
+            </p>
+            <label for="avatar-upload" class="mt-1.5 text-xs text-[var(--accent)] cursor-pointer hover:underline">
+              Change photo ↗
+            </label>
+            <input id="avatar-upload" type="file" accept="image/*" class="sr-only" @change="uploadImage" />
           </div>
 
-          <!-- Avatar with gradient ring -->
-          <div v-else class="relative">
-            <div class="p-[3px] rounded-full bg-gradient-to-br from-violet-500 to-pink-500">
-              <img
-                :src="profileImage"
-                alt="Profile photo"
-                class="w-28 h-28 rounded-full object-cover border-[3px] border-[#F7F4EF] dark:border-[#0D0B14]"
-              />
+          <!-- Avatar — square, not circle -->
+          <div class="w-14 h-14 shrink-0 border border-[#E2DDD4] dark:border-[#2E2B25] overflow-hidden relative">
+            <div v-if="loading" class="w-full h-full bg-[#F2EDE3] dark:bg-[#1E1C19] flex items-center justify-center animate-pulse">
+              <div class="w-4 h-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
             </div>
-            <!-- Camera overlay on hover -->
-            <div
-              class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="white"
-                class="w-7 h-7"
-              >
-                <path
-                  d="M12 15.2A3.2 3.2 0 0 0 15.2 12 3.2 3.2 0 0 0 12 8.8 3.2 3.2 0 0 0 8.8 12a3.2 3.2 0 0 0 3.2 3.2M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"
-                />
-              </svg>
-            </div>
+            <img v-else :src="profileImage" alt="Profile" class="w-full h-full object-cover" />
           </div>
-        </label>
+        </div>
 
-        <input
-          id="avatar-upload"
-          type="file"
-          accept="image/*"
-          class="sr-only"
-          @change="uploadImage"
-        />
-        <p class="text-xs text-[#78716C] dark:text-[#9089A8] mt-3">
-          Click to upload · max 1 MB
-        </p>
-      </div>
-
-      <!-- ─── Form ─────────────────────────────────────────────────────── -->
-      <div class="space-y-4">
-        <!-- Username input -->
-        <div>
-          <label class="block text-sm font-semibold mb-2">Username</label>
+        <!-- ── Username row ───────────────────────────────────── -->
+        <div class="flex items-center justify-between py-5 border-b border-[#E2DDD4] dark:border-[#2E2B25] gap-8">
+          <p class="text-xs font-bold tracking-[0.12em] uppercase text-[#8A8679] dark:text-[#7A7870] shrink-0">
+            Username
+          </p>
           <input
             v-model="username"
             type="text"
-            placeholder="Enter your username"
-            class="w-full bg-white dark:bg-[#18152A] border border-black/8 dark:border-white/8 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-500 dark:focus:border-violet-400 placeholder-[#78716C] dark:placeholder-[#9089A8] transition"
+            placeholder="Your name"
+            class="flex-1 min-w-0 max-w-xs bg-transparent border-b border-[#E2DDD4] dark:border-[#2E2B25] focus:border-[#1A1916] dark:focus:border-[#EDE9DF] outline-none py-1 text-sm text-right transition-colors placeholder-[#8A8679] dark:placeholder-[#7A7870]"
           />
         </div>
 
-        <!-- Theme toggle card -->
-        <div
-          class="flex items-center justify-between bg-white dark:bg-[#18152A] border border-black/8 dark:border-white/8 rounded-xl px-4 py-4"
-        >
+        <!-- ── Theme row ──────────────────────────────────────── -->
+        <div class="flex items-center justify-between py-5 border-b border-[#E2DDD4] dark:border-[#2E2B25]">
           <div>
-            <p class="text-sm font-semibold">
-              {{ theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode' }}
+            <p class="text-xs font-bold tracking-[0.12em] uppercase text-[#8A8679] dark:text-[#7A7870]">
+              Appearance
             </p>
-            <p class="text-xs text-[#78716C] dark:text-[#9089A8] mt-0.5">
-              {{ theme === 'dark' ? 'Easy on the eyes at night' : 'Crisp and clean by day' }}
-            </p>
+            <p class="text-sm mt-0.5">{{ theme === 'dark' ? 'Dark' : 'Light' }}</p>
           </div>
 
           <!-- Toggle switch -->
           <button
             @click="toggleTheme"
             :class="[
-              'relative w-12 h-6 rounded-full transition-all duration-300',
-              theme === 'dark' ? 'gradient-bg' : 'bg-black/15 dark:bg-white/15',
+              'relative w-11 h-6 border transition-colors',
+              theme === 'dark'
+                ? 'bg-[#1A1916] dark:bg-[#EDE9DF] border-[#1A1916] dark:border-[#EDE9DF]'
+                : 'bg-transparent border-[#E2DDD4] dark:border-[#2E2B25]'
             ]"
             role="switch"
             :aria-checked="theme === 'dark'"
           >
             <span
               :class="[
-                'absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow transition-all duration-300',
-                theme === 'dark' ? 'left-[26px]' : 'left-[3px]',
+                'absolute top-[3px] w-[18px] h-[18px] transition-all duration-200',
+                theme === 'dark'
+                  ? 'left-[23px] bg-[#F9F8F4] dark:bg-[#141310]'
+                  : 'left-[3px] bg-[#1A1916] dark:bg-[#EDE9DF]'
               ]"
             />
           </button>
         </div>
 
-        <!-- Save button -->
-        <button
-          @click="saveProfile"
-          :class="[
-            'w-full py-3.5 rounded-xl font-semibold text-white flex items-center justify-center gap-2 transition-all duration-300',
-            saved
-              ? 'bg-emerald-500 scale-[0.99]'
-              : 'gradient-bg hover:opacity-90 hover:scale-[1.01] shadow-lg shadow-violet-500/20',
-          ]"
-        >
-          <svg
-            v-if="saved"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="w-5 h-5"
+        <!-- ── Save row ───────────────────────────────────────── -->
+        <div class="flex items-center justify-between py-5">
+          <p class="text-xs text-[#8A8679] dark:text-[#7A7870]">
+            Changes are saved to your browser.
+          </p>
+          <button
+            @click="saveProfile"
+            :class="[
+              'text-xs font-bold tracking-[0.12em] uppercase px-4 py-2 border transition-colors',
+              saved
+                ? 'border-green-600 text-green-600'
+                : 'border-[#1A1916] dark:border-[#EDE9DF] text-[#1A1916] dark:text-[#EDE9DF] hover:bg-[#1A1916] dark:hover:bg-[#EDE9DF] hover:text-[#F9F8F4] dark:hover:text-[#141310]'
+            ]"
           >
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-          </svg>
-          <svg
-            v-else
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="w-5 h-5"
-          >
-            <path
-              d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
-            />
-          </svg>
-          {{ saved ? 'Saved!' : 'Save Changes' }}
-        </button>
+            {{ saved ? 'Saved ✓' : 'Save' }}
+          </button>
+        </div>
+
       </div>
     </div>
   </div>

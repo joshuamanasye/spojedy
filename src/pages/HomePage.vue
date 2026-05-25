@@ -5,87 +5,76 @@ import { songs } from '../data/songlist'
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F7F4EF] dark:bg-[#0D0B14] text-[#1C1917] dark:text-[#F5F3FF]">
+  <div class="min-h-screen bg-[#F9F8F4] dark:bg-[#141310] text-[#1A1916] dark:text-[#EDE9DF]">
     <ComponentNavbar />
 
-    <!-- ─── Hero: Featured Track ──────────────────────────────────────── -->
-    <div class="relative overflow-hidden">
-      <!-- Blurred album art as atmospheric background -->
-      <div class="absolute inset-0 pointer-events-none">
+    <div class="max-w-5xl mx-auto">
+
+      <!-- ── Page label row ─────────────────────────────────── -->
+      <div class="flex items-end justify-between px-5 pt-10 pb-4">
+        <h1 class="text-[2.8rem] leading-none font-black tracking-[-0.04em]">
+          Trending
+        </h1>
+        <span class="text-xs text-[#8A8679] dark:text-[#7A7870] mb-1.5 tabular-nums">
+          {{ songs.length }} songs
+        </span>
+      </div>
+
+      <!-- ── Featured: first song, horizontal strip ─────────── -->
+      <RouterLink
+        :to="`/song/${songs[0].id}`"
+        class="group flex items-stretch border-t border-b border-[#E2DDD4] dark:border-[#2E2B25] hover:bg-[#F2EDE3] dark:hover:bg-[#1E1C19] transition-colors"
+      >
+        <!-- Art — taller than regular rows -->
         <img
           :src="songs[0].cover"
-          aria-hidden="true"
-          class="w-full h-full object-cover scale-110 blur-3xl opacity-25 dark:opacity-15"
+          :alt="songs[0].title"
+          class="w-20 h-20 object-cover shrink-0 self-center ml-5 my-4"
         />
-        <div
-          class="absolute inset-0 bg-gradient-to-b from-[#F7F4EF]/70 via-[#F7F4EF]/90 to-[#F7F4EF] dark:from-[#0D0B14]/70 dark:via-[#0D0B14]/90 dark:to-[#0D0B14]"
-        />
-      </div>
 
-      <div class="relative max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16">
-        <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-          <!-- Cover art -->
-          <RouterLink
-            :to="`/song/${songs[0].id}`"
-            class="shrink-0 group"
-          >
-            <img
-              :src="songs[0].cover"
-              :alt="songs[0].title"
-              class="w-44 h-44 md:w-56 md:h-56 rounded-3xl object-cover shadow-2xl group-hover:scale-105 group-hover:shadow-violet-400/20 transition-all duration-300"
-            />
-          </RouterLink>
-
-          <!-- Info -->
-          <div class="text-center md:text-left">
-            <p
-              class="text-xs font-bold tracking-[0.2em] uppercase gradient-text mb-3"
-            >
-              ✦ Featured Track
-            </p>
-            <h1
-              class="text-4xl md:text-6xl font-black text-[#1C1917] dark:text-[#F5F3FF] leading-tight"
-            >
-              {{ songs[0].title }}
-            </h1>
-            <p class="text-xl text-[#78716C] dark:text-[#9089A8] mt-2 font-medium">
-              {{ songs[0].artist }}
-            </p>
-
-            <RouterLink
-              :to="`/song/${songs[0].id}`"
-              class="inline-flex items-center gap-2 mt-6 px-7 py-3 rounded-full gradient-bg text-white font-semibold shadow-lg shadow-violet-500/25 hover:opacity-90 hover:scale-105 hover:shadow-violet-500/40 transition-all duration-200 text-sm"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                class="w-4 h-4 ml-0.5"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              Play Now
-            </RouterLink>
-          </div>
+        <!-- Info -->
+        <div class="flex-1 min-w-0 px-5 py-4 flex flex-col justify-center">
+          <p class="text-[10px] font-bold tracking-[0.15em] uppercase text-[var(--accent)] mb-1">
+            Featured
+          </p>
+          <p class="text-xl font-black tracking-tight leading-tight text-[#1A1916] dark:text-[#EDE9DF] truncate">
+            {{ songs[0].title }}
+          </p>
+          <p class="text-sm text-[#8A8679] dark:text-[#7A7870] mt-0.5">
+            {{ songs[0].artist }}
+          </p>
         </div>
+
+        <!-- Play cue -->
+        <div class="flex items-center pr-6 opacity-0 group-hover:opacity-100 transition-opacity">
+          <span class="text-xs font-bold tracking-widest text-[var(--accent)]">PLAY →</span>
+        </div>
+      </RouterLink>
+
+      <!-- ── Column headers ─────────────────────────────────── -->
+      <div class="flex items-center gap-4 px-5 pt-5 pb-2">
+        <span class="w-5" />
+        <span class="w-9 shrink-0" />
+        <span class="flex-1 text-[10px] font-bold tracking-[0.15em] uppercase text-[#8A8679] dark:text-[#7A7870]">
+          Title
+        </span>
+        <span class="hidden md:block text-[10px] font-bold tracking-[0.15em] uppercase text-[#8A8679] dark:text-[#7A7870] w-36">
+          Artist
+        </span>
       </div>
-    </div>
 
-    <!-- ─── Song Grid ──────────────────────────────────────────────────── -->
-    <div class="max-w-7xl mx-auto px-4 md:px-8 pb-16">
-      <h2 class="text-2xl font-bold mb-6">
-        Trending Songs
-      </h2>
-
-      <div
-        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4"
-      >
+      <!-- ── Tracklist (all songs) ──────────────────────────── -->
+      <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25]">
         <SongCard
-          v-for="song in songs"
+          v-for="(song, i) in songs"
           :key="song.id"
           :song="song"
+          :index="i"
+          class="animate-enter"
+          :style="{ animationDelay: `${i * 40}ms` }"
         />
       </div>
+
     </div>
   </div>
 </template>

@@ -4,22 +4,20 @@ import { useRoute, useRouter } from 'vue-router'
 import ComponentNavbar from '../components/ComponentNavbar.vue'
 import { songs } from '../data/songlist'
 
-const route = useRoute()
+const route  = useRoute()
 const router = useRouter()
 
-const songId = computed(() => Number(route.params.id))
-const currentSongIndex = computed(() =>
-  songs.findIndex((s) => s.id === songId.value)
-)
-const currentSong = computed(() => songs[currentSongIndex.value])
+const songId           = computed(() => Number(route.params.id))
+const currentIndex     = computed(() => songs.findIndex(s => s.id === songId.value))
+const currentSong      = computed(() => songs[currentIndex.value])
 
 const audioPlayer = ref(null)
-const isPlaying = ref(false)
+const isPlaying   = ref(false)
 const currentTime = ref(0)
-const duration = ref(0)
-const volume = ref(1)
+const duration    = ref(0)
+const volume      = ref(1)
 const isFullscreen = ref(false)
-const zoomLevel = ref(1)
+const zoomLevel    = ref(1)
 
 const togglePlay = () => {
   if (isPlaying.value) {
@@ -33,310 +31,192 @@ const togglePlay = () => {
 
 const nextSong = () => {
   isPlaying.value = false
-  const next = (currentSongIndex.value + 1) % songs.length
-  router.push(`/song/${songs[next].id}`)
+  router.push(`/song/${songs[(currentIndex.value + 1) % songs.length].id}`)
 }
 
-const previousSong = () => {
+const prevSong = () => {
   isPlaying.value = false
-  const prev = (currentSongIndex.value - 1 + songs.length) % songs.length
-  router.push(`/song/${songs[prev].id}`)
+  router.push(`/song/${songs[(currentIndex.value - 1 + songs.length) % songs.length].id}`)
 }
 
 const updateProgress = () => {
   currentTime.value = audioPlayer.value.currentTime
-  duration.value = audioPlayer.value.duration || 0
+  duration.value    = audioPlayer.value.duration || 0
 }
 
-/* Uses clientX + bounding rect for accurate click position */
-const setProgress = (event) => {
-  const rect = event.currentTarget.getBoundingClientRect()
-  const ratio = (event.clientX - rect.left) / rect.width
-  audioPlayer.value.currentTime = ratio * duration.value
+const setProgress = (e) => {
+  const r = e.currentTarget.getBoundingClientRect()
+  audioPlayer.value.currentTime = ((e.clientX - r.left) / r.width) * duration.value
 }
 
-const formatTime = (time) => {
-  if (!time || isNaN(time)) return '0:00'
-  const m = Math.floor(time / 60)
-  const s = Math.floor(time % 60)
-  return `${m}:${s < 10 ? '0' : ''}${s}`
+const fmt = (t) => {
+  if (!t || isNaN(t)) return '0:00'
+  return `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`
 }
 
-const changeVolume = () => {
-  audioPlayer.value.volume = volume.value
-}
+const changeVolume = () => { audioPlayer.value.volume = volume.value }
 
-const openFullscreen = () => {
-  isFullscreen.value = true
-  zoomLevel.value = 1
-}
-
-const closeFullscreen = () => {
-  isFullscreen.value = false
-}
-
-const zoomIn = () => {
-  zoomLevel.value = Math.min(zoomLevel.value + 0.25, 3)
-}
-
-const zoomOut = () => {
-  zoomLevel.value = Math.max(zoomLevel.value - 0.25, 0.5)
-}
-
-const goToVideo = () => {
-  router.push(`/video/${currentSong.value.id}`)
-}
-
-const progressPercent = computed(() =>
-  duration.value ? (currentTime.value / duration.value) * 100 : 0
-)
+const pct = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F7F4EF] dark:bg-[#0D0B14] text-[#1C1917] dark:text-[#F5F3FF]">
+  <div class="min-h-screen bg-[#F9F8F4] dark:bg-[#141310] text-[#1A1916] dark:text-[#EDE9DF]">
     <ComponentNavbar />
 
-    <!-- ─── Atmospheric background glow ──────────────────────────────── -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-      <div
-        class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-10 dark:opacity-5 blur-3xl gradient-bg"
-      />
-    </div>
+    <!-- ── Two-column layout ──────────────────────────────────── -->
+    <div class="max-w-5xl mx-auto px-5 py-10">
+      <div class="flex flex-col md:flex-row gap-10 md:gap-14 items-start">
 
-    <div class="max-w-sm mx-auto px-4 py-10 flex flex-col items-center">
-
-      <!-- ─── Album Art (vinyl) ─────────────────────────────────────── -->
-      <div class="relative mt-4 mb-8">
-        <!-- Glow halo behind art -->
-        <div
-          class="absolute inset-[-20%] rounded-full gradient-bg animate-glow-pulse blur-2xl"
-        />
-        <img
-          :src="currentSong.cover"
-          :alt="currentSong.title"
-          :class="[
-            'relative w-64 h-64 rounded-full object-cover shadow-2xl cursor-pointer border-4 border-white/20 dark:border-white/10',
-            isPlaying ? 'animate-spin-slow' : '',
-          ]"
-          @click="openFullscreen"
-        />
-        <!-- Center hole of vinyl -->
-        <div
-          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#F7F4EF] dark:bg-[#0D0B14] shadow-inner pointer-events-none"
-        />
-      </div>
-
-      <!-- ─── Song Info ──────────────────────────────────────────────── -->
-      <h1 class="text-2xl font-black text-center">
-        {{ currentSong.title }}
-      </h1>
-      <p class="text-[#78716C] dark:text-[#9089A8] mt-1 font-medium">
-        {{ currentSong.artist }}
-      </p>
-
-      <!-- Hidden audio element -->
-      <audio
-        ref="audioPlayer"
-        :src="currentSong.audio"
-        @timeupdate="updateProgress"
-        @loadedmetadata="updateProgress"
-        @ended="nextSong"
-      />
-
-      <!-- ─── Progress Bar ───────────────────────────────────────────── -->
-      <div class="w-full mt-8">
-        <div
-          class="group relative w-full h-1.5 rounded-full bg-black/10 dark:bg-white/10 cursor-pointer"
-          @click="setProgress"
-        >
-          <div
-            class="h-full rounded-full gradient-bg relative transition-none"
-            :style="{ width: progressPercent + '%' }"
-          >
-            <span
-              class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3.5 h-3.5 rounded-full bg-white shadow opacity-0 group-hover:opacity-100 transition-opacity"
+        <!-- ── LEFT: Album art ──────────────────────────────── -->
+        <div class="md:w-72 md:shrink-0 w-full">
+          <div class="relative w-full md:w-72 aspect-square">
+            <img
+              :src="currentSong.cover"
+              :alt="currentSong.title"
+              :class="[
+                'w-full h-full object-cover cursor-pointer border border-[#E2DDD4] dark:border-[#2E2B25]',
+                isPlaying ? 'animate-spin-slow rounded-full' : ''
+              ]"
+              @click="isFullscreen = true"
             />
+            <!-- tiny "click to expand" hint -->
+            <span class="absolute bottom-2 right-2 text-[10px] text-white/50 select-none pointer-events-none">
+              click to expand
+            </span>
           </div>
+
+          <!-- Track position label -->
+          <p class="mt-3 text-[10px] tracking-[0.15em] uppercase text-[#8A8679] dark:text-[#7A7870]">
+            {{ String(currentIndex + 1).padStart(2, '0') }} /
+            {{ String(songs.length).padStart(2, '0') }}
+          </p>
         </div>
-        <div
-          class="flex justify-between text-xs text-[#78716C] dark:text-[#9089A8] mt-2"
-        >
-          <span>{{ formatTime(currentTime) }}</span>
-          <span>{{ formatTime(duration) }}</span>
+
+        <!-- ── RIGHT: Controls ──────────────────────────────── -->
+        <div class="flex-1 min-w-0 pt-1">
+
+          <!-- Title + artist -->
+          <h1 class="text-3xl md:text-4xl font-black tracking-tight leading-none">
+            {{ currentSong.title }}
+          </h1>
+          <p class="mt-2 text-sm font-medium tracking-[0.08em] uppercase text-[#8A8679] dark:text-[#7A7870]">
+            {{ currentSong.artist }}
+          </p>
+
+          <audio
+            ref="audioPlayer"
+            :src="currentSong.audio"
+            @timeupdate="updateProgress"
+            @loadedmetadata="updateProgress"
+            @ended="nextSong"
+          />
+
+          <!-- ── Progress bar ────────────────────────────────── -->
+          <div class="mt-8">
+            <div
+              class="relative w-full h-px bg-[#E2DDD4] dark:bg-[#2E2B25] cursor-pointer group"
+              @click="setProgress"
+            >
+              <!-- Filled portion -->
+              <div
+                class="absolute top-0 left-0 h-full bg-[#1A1916] dark:bg-[#EDE9DF] transition-none"
+                :style="{ width: pct + '%' }"
+              />
+              <!-- Playhead dot -->
+              <div
+                class="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[var(--accent)] -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                :style="{ left: pct + '%' }"
+              />
+            </div>
+            <div class="flex justify-between text-[10px] tabular-nums text-[#8A8679] dark:text-[#7A7870] mt-1.5">
+              <span>{{ fmt(currentTime) }}</span>
+              <span>{{ fmt(duration) }}</span>
+            </div>
+          </div>
+
+          <!-- ── Playback controls ───────────────────────────── -->
+          <div class="flex items-center gap-4 mt-6">
+            <button
+              @click="prevSong"
+              class="text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"
+              title="Previous"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                <path d="M6 5h2v14H6zm3.5 7 8.5 7V5z" />
+              </svg>
+            </button>
+
+            <!-- Play / Pause — the only accented element -->
+            <button
+              @click="togglePlay"
+              class="w-12 h-12 flex items-center justify-center bg-[#1A1916] dark:bg-[#EDE9DF] text-[#F9F8F4] dark:text-[#141310] hover:bg-[var(--accent)] dark:hover:bg-[var(--accent)] dark:hover:text-white transition-colors"
+              title="Play / Pause"
+            >
+              <svg v-if="!isPlaying" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 ml-0.5">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+              </svg>
+            </button>
+
+            <button
+              @click="nextSong"
+              class="text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"
+              title="Next"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                <path d="M16 5h2v14h-2zm-10.5 7L14 19V5z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- ── Volume ──────────────────────────────────────── -->
+          <div class="flex items-center gap-3 mt-5 max-w-[220px]">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 shrink-0 text-[#8A8679] dark:text-[#7A7870]">
+              <path d="M18.5 12A4.5 4.5 0 0 0 16 8v8a4.5 4.5 0 0 0 2.5-4zM5 9v6h4l5 5V4L9 9H5z" />
+            </svg>
+            <input v-model="volume" type="range" min="0" max="1" step="0.01" @input="changeVolume" class="w-full" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 shrink-0 text-[#8A8679] dark:text-[#7A7870]">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+            </svg>
+          </div>
+
+          <!-- ── Divider + secondary action ─────────────────── -->
+          <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25] mt-8 pt-5">
+            <button
+              @click="$router.push(`/video/${currentSong.id}`)"
+              class="text-xs font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors"
+            >
+              Watch music video →
+            </button>
+          </div>
+
         </div>
       </div>
-
-      <!-- ─── Playback Controls ──────────────────────────────────────── -->
-      <div class="flex items-center gap-6 mt-7">
-        <!-- Previous -->
-        <button
-          @click="previousSong"
-          class="w-11 h-11 flex items-center justify-center rounded-full text-[#78716C] dark:text-[#9089A8] hover:text-[#1C1917] dark:hover:text-[#F5F3FF] hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            class="w-6 h-6"
-          >
-            <path d="M6 5h2v14H6zm3.5 7 8.5 7V5z" />
-          </svg>
-        </button>
-
-        <!-- Play / Pause -->
-        <button
-          @click="togglePlay"
-          class="w-16 h-16 rounded-full gradient-bg flex items-center justify-center text-white shadow-lg shadow-violet-500/30 hover:scale-110 hover:shadow-violet-500/50 hover:shadow-xl transition-all duration-200"
-        >
-          <svg
-            v-if="!isPlaying"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="white"
-            class="w-7 h-7 ml-1"
-          >
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          <svg
-            v-else
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="white"
-            class="w-7 h-7"
-          >
-            <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
-          </svg>
-        </button>
-
-        <!-- Next -->
-        <button
-          @click="nextSong"
-          class="w-11 h-11 flex items-center justify-center rounded-full text-[#78716C] dark:text-[#9089A8] hover:text-[#1C1917] dark:hover:text-[#F5F3FF] hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-            class="w-6 h-6"
-          >
-            <path d="M16 5h2v14h-2zm-10.5 7L14 19V5z" />
-          </svg>
-        </button>
-      </div>
-
-      <!-- ─── Volume ─────────────────────────────────────────────────── -->
-      <div class="flex items-center gap-3 mt-6 w-full max-w-[260px]">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4 shrink-0 text-[#78716C] dark:text-[#9089A8]"
-        >
-          <path d="M18.5 12A4.5 4.5 0 0 0 16 8v8a4.5 4.5 0 0 0 2.5-4zM5 9v6h4l5 5V4L9 9H5z" />
-        </svg>
-        <input
-          v-model="volume"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          @input="changeVolume"
-          class="w-full"
-        />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4 shrink-0 text-[#78716C] dark:text-[#9089A8]"
-        >
-          <path
-            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-          />
-        </svg>
-      </div>
-
-      <!-- ─── Watch Music Video Button ───────────────────────────────── -->
-      <button
-        @click="goToVideo"
-        class="mt-8 flex items-center gap-2 px-5 py-2.5 rounded-full border border-black/10 dark:border-white/10 text-sm font-medium text-[#78716C] dark:text-[#9089A8] hover:border-violet-400 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/15 transition-all duration-200"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="w-4 h-4"
-        >
-          <path
-            d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12zm-9-3.5 6-3.5-6-3.5v7z"
-          />
-        </svg>
-        Watch Music Video
-      </button>
     </div>
 
-    <!-- ─── Fullscreen cover viewer ───────────────────────────────────── -->
+    <!-- ── Fullscreen overlay ─────────────────────────────────── -->
     <Transition name="fs">
       <div
         v-if="isFullscreen"
-        class="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center"
-        @click.self="closeFullscreen"
+        class="fixed inset-0 z-50 bg-[#141310]/97 flex items-center justify-center"
+        @click.self="isFullscreen = false; zoomLevel = 1"
       >
         <img
           :src="currentSong.cover"
           :alt="currentSong.title"
-          :style="{ transform: `scale(${zoomLevel})`, transition: 'transform 0.25s ease' }"
-          class="max-w-[85vw] max-h-[80vh] object-contain rounded-2xl"
+          :style="{ transform: `scale(${zoomLevel})`, transition: 'transform 0.2s ease' }"
+          class="max-w-[85vw] max-h-[82vh] object-contain"
         />
 
         <!-- Controls bar -->
-        <div
-          class="absolute bottom-8 flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-full"
-        >
-          <button
-            @click="zoomOut"
-            class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/20 text-white transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-5 h-5"
-            >
-              <path d="M19 13H5v-2h14v2z" />
-            </svg>
-          </button>
-          <span class="text-white/70 text-xs w-10 text-center select-none">
-            {{ Math.round(zoomLevel * 100) }}%
-          </span>
-          <button
-            @click="zoomIn"
-            class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/20 text-white transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-5 h-5"
-            >
-              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-            </svg>
-          </button>
-          <div class="w-px h-5 bg-white/20 mx-1" />
-          <button
-            @click="closeFullscreen"
-            class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-500/30 text-white/70 hover:text-red-300 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-5 h-5"
-            >
-              <path
-                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-              />
-            </svg>
-          </button>
+        <div class="absolute bottom-7 flex items-center gap-1 border border-white/10 px-3 py-2">
+          <button @click="zoomLevel = Math.max(zoomLevel - 0.25, 0.5)" class="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors text-lg font-light">−</button>
+          <span class="text-white/40 text-xs w-10 text-center select-none">{{ Math.round(zoomLevel * 100) }}%</span>
+          <button @click="zoomLevel = Math.min(zoomLevel + 0.25, 3)"   class="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors text-lg font-light">+</button>
+          <div class="w-px h-4 bg-white/10 mx-1" />
+          <button @click="isFullscreen = false; zoomLevel = 1" class="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors text-xs tracking-widest">✕</button>
         </div>
       </div>
     </Transition>
@@ -344,12 +224,6 @@ const progressPercent = computed(() =>
 </template>
 
 <style scoped>
-.fs-enter-active,
-.fs-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fs-enter-from,
-.fs-leave-to {
-  opacity: 0;
-}
+.fs-enter-active, .fs-leave-active { transition: opacity 0.18s ease; }
+.fs-enter-from, .fs-leave-to       { opacity: 0; }
 </style>
