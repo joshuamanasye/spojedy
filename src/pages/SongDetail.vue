@@ -47,11 +47,11 @@ const prevSong = () => {
 
 const updateProgress = () => {
     currentTime.value = audioPlayer.value.currentTime
-    duration.value    = audioPlayer.value.duration || 0
+    duration.value = audioPlayer.value.duration || 0
 }
 
 const setProgress = (e) => {
-    const r       = e.currentTarget.getBoundingClientRect()
+    const r = e.currentTarget.getBoundingClientRect()
     const newTime = ((e.clientX - r.left) / r.width) * duration.value
     console.log('seek to:', newTime.toFixed(2), '/', duration.value.toFixed(2))
     audioPlayer.value.currentTime = newTime

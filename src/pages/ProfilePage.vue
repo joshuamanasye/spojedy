@@ -31,8 +31,8 @@ const toggleTheme = () => {
 }
 
 const saveProfile = () => {
-    localStorage.setItem('username',     username.value)
-    localStorage.setItem('theme',        theme.value)
+    localStorage.setItem('username', username.value)
+    localStorage.setItem('theme', theme.value)
     localStorage.setItem('profileImage', profileImage.value)
     applyTheme()
     saved.value = true
