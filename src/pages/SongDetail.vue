@@ -124,19 +124,21 @@ const pct = computed(() => (duration.value ? (currentTime.value / duration.value
                     <!-- Progress bar -->
                     <div class="mt-8">
                         <div
-                            class="relative w-full h-px bg-[#E2DDD4] dark:bg-[#2E2B25] cursor-pointer group"
+                            class="relative w-full h-5 flex items-center cursor-pointer group"
                             @click="setProgress"
                         >
-                            <!-- Filled -->
-                            <div
-                                class="absolute top-0 left-0 h-full bg-[#1A1916] dark:bg-[#EDE9DF] transition-none"
-                                :style="{ width: pct + '%' }"
-                            />
-                            <!-- Playhead dot -->
-                            <div
-                                class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[var(--accent)] -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                :style="{ left: pct + '%' }"
-                            />
+                            <div class="relative w-full h-px bg-[#E2DDD4] dark:bg-[#2E2B25]">
+                                <!-- Filled -->
+                                <div
+                                    class="absolute top-0 left-0 h-full bg-[#1A1916] dark:bg-[#EDE9DF] transition-none"
+                                    :style="{ width: pct + '%' }"
+                                />
+                                <!-- Playhead dot -->
+                                <div
+                                    class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[var(--accent)] -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    :style="{ left: pct + '%' }"
+                                />
+                            </div>
                         </div>
                         <div class="flex justify-between text-xs tabular-nums text-[#8A8679] dark:text-[#7A7870] mt-1.5">
                             <span>{{ fmt(currentTime) }}</span>
@@ -148,7 +150,7 @@ const pct = computed(() => (duration.value ? (currentTime.value / duration.value
                     <div class="flex items-center gap-5 mt-6">
                         <button
                             @click="prevSong"
-                            class="text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"
+                            class="w-14 h-14 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"
                             title="Previous"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
@@ -159,7 +161,7 @@ const pct = computed(() => (duration.value ? (currentTime.value / duration.value
                         <!-- Play / Pause -->
                         <button
                             @click="togglePlay"
-                            class="w-14 h-14 flex items-center justify-center bg-[#1A1916] dark:bg-[#EDE9DF] text-[#F9F8F4] dark:text-[#141310] hover:bg-[var(--accent)] dark:hover:bg-[var(--accent)] dark:hover:text-white transition-colors"
+                            class="w-14 h-14 flex items-center justify-center cursor-pointer bg-[#1A1916] dark:bg-[#EDE9DF] text-[#F9F8F4] dark:text-[#141310] hover:bg-[var(--accent)] dark:hover:bg-[var(--accent)] dark:hover:text-white transition-colors"
                             title="Play / Pause"
                         >
                             <svg v-if="!isPlaying" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 ml-0.5">
@@ -172,7 +174,7 @@ const pct = computed(() => (duration.value ? (currentTime.value / duration.value
 
                         <button
                             @click="nextSong"
-                            class="text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"
+                            class="w-14 h-14 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"
                             title="Next"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
@@ -196,9 +198,9 @@ const pct = computed(() => (duration.value ? (currentTime.value / duration.value
                     <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25] mt-8 pt-5">
                         <button
                             @click="$router.push(`/video/${currentSong.id}`)"
-                            class="text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors"
+                            class="cursor-pointer text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors"
                         >
-                            Watch music video
+                            Watch music video →
                         </button>
                     </div>
 

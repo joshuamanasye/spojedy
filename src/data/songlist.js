@@ -4,9 +4,9 @@ export const songs = [
         id: 1,
         title: 'Faint',
         artist: 'Linkin Park',
-        cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800&auto=format&fit=crop',
+        cover: 'https://cdn.joman.id/images/faint cover.png',
         audio: 'https://cdn.joman.id/audio/Faint.mp3',
-        video: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        video: 'https://cdn.joman.id/videos/',
     },
     {
         id: 2,

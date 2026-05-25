@@ -33,11 +33,15 @@ img, video { transition: none; }
 input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
+    height: 20px;
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
     height: 3px;
     border-radius: 9999px;
     background: var(--line);
-    outline: none;
-    cursor: pointer;
 }
 input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -47,9 +51,23 @@ input[type='range']::-webkit-slider-thumb {
     border-radius: 50%;
     background: var(--accent);
     cursor: pointer;
+    margin-top: -4.5px;
+}
+input[type='range']::-moz-range-track {
+    height: 3px;
+    border-radius: 9999px;
+    background: var(--line);
+}
+input[type='range']::-moz-range-thumb {
+    border: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 9999px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; }

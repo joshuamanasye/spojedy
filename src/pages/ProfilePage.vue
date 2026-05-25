@@ -5,7 +5,7 @@ import ComponentNavbar from '../components/ComponentNavbar.vue'
 
 const username = ref('User')
 const profileImage = ref(
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=300&auto=format&fit=crop'
+    'https://cdn.joman.id/images/photo.jpg'
 )
 const theme = ref('light')
 const loading = ref(false)
