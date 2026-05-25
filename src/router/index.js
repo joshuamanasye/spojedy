@@ -7,29 +7,29 @@ import MusicVideoDetail from '../pages/MusicVideoDetail.vue'
 import Profile from '../pages/ProfilePage.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    {
-      path: '/',
-      component: Home,
-    },
-    {
-      path: '/song/:id',
-      component: SongDetail,
-    },
-    {
-      path: '/videos',
-      component: MusicVideo,
-    },
-    {
-      path: '/video/:id',
-      component: MusicVideoDetail,
-    },
-    {
-      path: '/profile',
-      component: Profile,
-    },
-  ],
+    history: createWebHistory(),
+    routes: [
+        {
+            path: '/',
+            component: Home,
+        },
+        {
+            path: '/song/:id',
+            component: SongDetail,
+        },
+        {
+            path: '/videos',
+            component: MusicVideo,
+        },
+        {
+            path: '/video/:id',
+            component: MusicVideoDetail,
+        },
+        {
+            path: '/profile',
+            component: Profile,
+        },
+    ],
 })
 
 export default router
