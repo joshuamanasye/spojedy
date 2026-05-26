@@ -25,7 +25,7 @@ onMounted(() => {
             </RouterLink>
 
             <!-- Nav links -->
-            <div class="flex items-center gap-7 text-sm font-medium tracking-wide">
+            <div class="flex items-center gap-6 text-sm font-medium tracking-wide">
                 <RouterLink
                     to="/"
                     class="text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors"

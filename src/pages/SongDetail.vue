@@ -80,7 +80,7 @@ const pct = computed(() => (duration.value ? (currentTime.value / duration.value
 
                 <!-- Album art -->
                 <div class="md:w-80 md:shrink-0 w-full">
-                    <div class="relative w-full md:w-80 aspect-square">
+                    <div class="relative w-full md:w-80 aspect-square overflow-hidden">
                         <img
                             :src="currentSong.cover"
                             :alt="currentSong.title"
