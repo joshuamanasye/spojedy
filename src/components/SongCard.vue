@@ -1,3 +1,13 @@
+import { useQueue } from '../composables/useQueue'
+import { ref } from 'vue'
+const { addToQueue } = useQueue()
+const toasted = ref(false)
+function handleAddToQueue(e, song) {
+    e.preventDefault(); e.stopPropagation()
+    addToQueue(song)
+    toasted.value = true
+    setTimeout(() => (toasted.value = false), 1200)
+}
 <script setup>
 defineProps({
     song:  Object,
@@ -21,7 +31,7 @@ defineProps({
         >
             <path d="M8 5v14l11-7z" />
         </svg>
-        
+
         <img
             :src="song.cover"
             :alt="song.title"
@@ -38,6 +48,9 @@ defineProps({
         <p class="hidden md:block text-sm text-[#8A8679] dark:text-[#7A7870] shrink-0 w-44 truncate">
             {{ song.artist }}
         </p>
+        <button @click="handleAddToQueue($event, song)" ...>
+    + Queue
+</button>
 
     </RouterLink>
 </template>
