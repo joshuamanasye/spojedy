@@ -3,9 +3,12 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ComponentNavbar from '../components/ComponentNavbar.vue'
 import { songs } from '../data/songlist'
+import { usePlayer } from '../composables/usePlayer'
 
 const route = useRoute()
 const router = useRouter()
+
+const { pauseForVideo } = usePlayer()
 
 const videoPlayer = ref(null)
 const isPlaying = ref(false)
@@ -42,6 +45,7 @@ const toggleVideo = () => {
         isPlaying.value = false
         console.log('video paused')
     } else {
+        pauseForVideo()   // pause music — user must click play on music to resume
         videoPlayer.value.play()
         isPlaying.value = true
         console.log('video playing:', currentSong.value.title)

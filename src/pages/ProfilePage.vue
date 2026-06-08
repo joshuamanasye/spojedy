@@ -37,6 +37,11 @@ const saveProfile = () => {
     applyTheme()
     saved.value = true
     setTimeout(() => (saved.value = false), 2000)
+
+    // Bootstrap Toast notification
+    const toast = new window.bootstrap.Toast(document.getElementById('saveToast'), { delay: 2500 })
+    toast.show()
+    console.log('profile saved:', { username: username.value, theme: theme.value })
 }
 
 /* Compress to ≤1 MB then store as base64 blob */
@@ -159,6 +164,29 @@ const uploadImage = async (e) => {
                     </button>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- Bootstrap Toast: profile save confirmation -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+            <div
+                id="saveToast"
+                class="toast align-items-center border-0 text-bg-dark"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+            >
+                <div class="d-flex">
+                    <div class="toast-body" style="font-size: 13px; letter-spacing: 0.06em; font-weight: 600;">
+                        Profile saved ✓
+                    </div>
+                    <button
+                        type="button"
+                        class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"
+                        aria-label="Close"
+                    ></button>
+                </div>
             </div>
         </div>
     </div>
