@@ -83,7 +83,7 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
 
         <div class="max-w-5xl mx-auto px-5 py-8">
 
-            <!-- Video -->
+            <!-- video -->
             <div class="bg-black border border-[#E2DDD4] dark:border-[#2E2B25]">
                 <video
                     ref="videoPlayer"
@@ -95,19 +95,19 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
                 />
             </div>
 
-            <!-- Progress bar -->
+            <!-- progress bar -->
             <div class="mt-3">
                 <div
                     class="relative w-full h-5 flex items-center cursor-pointer group"
                     @click="setProgress"
                 >
                     <div class="relative w-full h-px bg-[#E2DDD4] dark:bg-[#2E2B25]">
-                        <!-- Filled -->
+                        <!-- filled -->
                         <div
                             class="absolute top-0 left-0 h-full bg-[#1A1916] dark:bg-[#EDE9DF] transition-none"
                             :style="{ width: pct + '%' }"
                         />
-                        <!-- Playhead dot -->
+                        <!-- playhead dot -->
                         <div
                             class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[var(--accent)] -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
                             :style="{ left: pct + '%' }"
@@ -120,7 +120,7 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
                 </div>
             </div>
 
-            <!-- Title row -->
+            <!-- title row -->
             <div class="mt-5 flex items-start justify-between gap-6">
                 <div class="min-w-0">
                     <p class="text-xs font-bold tracking-[0.15em] uppercase text-[#8A8679] dark:text-[#7A7870] mb-1">
@@ -134,7 +134,7 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
                     </p>
                 </div>
 
-                <!-- Go to song -->
+                <!-- go to song -->
                 <button
                     @click="goToSong"
                     class="cursor-pointer shrink-0 text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors mt-1 whitespace-nowrap"
@@ -143,10 +143,10 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
                 </button>
             </div>
 
-            <!-- Controls -->
+            <!-- controls -->
             <div class="mt-5 flex items-center gap-5 flex-wrap border-t border-[#E2DDD4] dark:border-[#2E2B25] pt-5">
 
-                <!-- Prev / Play / Next -->
+                <!-- prev / play / next -->
                 <div class="flex items-center gap-4">
                     <button @click="prevVideo" class="w-12 h-12 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
@@ -173,7 +173,7 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
                     </button>
                 </div>
 
-                <!-- Volume -->
+                <!-- volume -->
                 <div class="flex items-center gap-2 w-44">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 shrink-0 text-[#8A8679] dark:text-[#7A7870]">
                         <path d="M18.5 12A4.5 4.5 0 0 0 16 8v8a4.5 4.5 0 0 0 2.5-4zM5 9v6h4l5 5V4L9 9H5z" />
@@ -181,7 +181,7 @@ const goToSong = () => { router.push(`/song/${currentSong.value.id}`) }
                     <input v-model="volume" type="range" min="0" max="1" step="0.01" @input="changeVolume" class="w-full" />
                 </div>
 
-                <!-- Fullscreen -->
+                <!-- fullscreen -->
                 <button
                     @click="fullscreen"
                     class="ml-auto cursor-pointer text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] transition-colors flex items-center gap-1.5"

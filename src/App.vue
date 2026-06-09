@@ -7,12 +7,12 @@ import { usePlayer } from './composables/usePlayer'
 const route = useRoute()
 const { currentSong } = usePlayer()
 
-// Show the bar on every page except the full song detail and video detail
+// show the bar on every page except the full song detail and video detail
 const showPlayerBar = computed(() =>
     !route.path.match(/^\/(song|video)\//)
 )
 
-// Always pad when the bar is present (bar renders even with no song loaded)
+// always pad when the bar is present (bar renders even with no song loaded)
 const hasBar = computed(() => showPlayerBar.value)
 
 onMounted(() => {

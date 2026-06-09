@@ -1,4 +1,4 @@
-/* Song data — cover images served from Unsplash CDN (imgix), audio from SoundHelix CDN */
+/* song data — cover images served from Unsplash CDN (imgix), audio from SoundHelix CDN */
 export const songs = [
     {
         id: 1,

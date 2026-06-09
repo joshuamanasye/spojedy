@@ -38,13 +38,13 @@ const saveProfile = () => {
     saved.value = true
     setTimeout(() => (saved.value = false), 2000)
 
-    // Bootstrap Toast notification
+    // bootstrap Toast notification
     const toast = new window.bootstrap.Toast(document.getElementById('saveToast'), { delay: 2500 })
     toast.show()
     console.log('profile saved:', { username: username.value, theme: theme.value })
 }
 
-/* Compress to ≤1 MB then store as base64 blob */
+/* compress to ≤1 MB then store as base64 blob */
 const uploadImage = async (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -55,13 +55,15 @@ const uploadImage = async (e) => {
             maxWidthOrHeight: 1000,
             useWebWorker: true,
         })
+        console.log('avatar: compressed from', (file.size / 1024).toFixed(0), 'KB ->', (compressed.size / 1024).toFixed(0), 'KB')
         const reader = new FileReader()
         reader.readAsDataURL(compressed)
         reader.onload = () => {
             profileImage.value = reader.result
             loading.value = false
         }
-    } catch {
+    } catch (err) {
+        console.log('avatar: compress failed', err)
         loading.value = false
     }
 }
@@ -72,15 +74,14 @@ const uploadImage = async (e) => {
         <ComponentNavbar />
 
         <div class="max-w-5xl mx-auto px-5 py-10">
-
-            <!-- Page label -->
+            
             <h1 class="text-[3.2rem] leading-none font-black tracking-[-0.04em] mb-8">
                 Profile
             </h1>
 
             <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25]">
 
-                <!-- Avatar row -->
+                <!-- avatar row -->
                 <div class="flex items-center justify-between py-6 border-b border-[#E2DDD4] dark:border-[#2E2B25]">
                     <div>
                         <p class="text-sm font-bold tracking-[0.12em] uppercase text-[#8A8679] dark:text-[#7A7870]">
@@ -92,7 +93,7 @@ const uploadImage = async (e) => {
                         <input id="avatar-upload" type="file" accept="image/*" class="sr-only" @change="uploadImage" />
                     </div>
 
-                    <!-- Avatar — square, not circle -->
+                    <!-- avatar -->
                     <div class="w-16 h-16 shrink-0 border border-[#E2DDD4] dark:border-[#2E2B25] overflow-hidden relative">
                         <div v-if="loading" class="w-full h-full bg-[#F2EDE3] dark:bg-[#1E1C19] flex items-center justify-center animate-pulse">
                             <div class="w-4 h-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
@@ -101,7 +102,7 @@ const uploadImage = async (e) => {
                     </div>
                 </div>
 
-                <!-- Username row -->
+                <!-- username row -->
                 <div class="flex items-center justify-between py-6 border-b border-[#E2DDD4] dark:border-[#2E2B25] gap-8">
                     <p class="text-sm font-bold tracking-[0.12em] uppercase text-[#8A8679] dark:text-[#7A7870] shrink-0">
                         Username
@@ -114,7 +115,7 @@ const uploadImage = async (e) => {
                     />
                 </div>
 
-                <!-- Theme row -->
+                <!-- theme row -->
                 <div class="flex items-center justify-between py-6 border-b border-[#E2DDD4] dark:border-[#2E2B25]">
                     <div>
                         <p class="text-sm font-bold tracking-[0.12em] uppercase text-[#8A8679] dark:text-[#7A7870]">
@@ -123,7 +124,7 @@ const uploadImage = async (e) => {
                         <p class="text-base mt-0.5">{{ theme === 'dark' ? 'Dark' : 'Light' }}</p>
                     </div>
 
-                    <!-- Toggle switch -->
+                    <!-- toggle switch -->
                     <button
                         @click="toggleTheme"
                         :class="[
@@ -146,7 +147,7 @@ const uploadImage = async (e) => {
                     </button>
                 </div>
 
-                <!-- Save row -->
+                <!-- save row -->
                 <div class="flex items-center justify-between py-6">
                     <p class="text-sm text-[#8A8679] dark:text-[#7A7870]">
                         Changes are saved to your browser.
@@ -167,7 +168,7 @@ const uploadImage = async (e) => {
             </div>
         </div>
 
-        <!-- Bootstrap Toast: profile save confirmation -->
+        <!-- profile save confirmation -->
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
             <div
                 id="saveToast"

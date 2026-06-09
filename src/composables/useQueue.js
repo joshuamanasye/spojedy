@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 
-// Module-level state — shared across every component that imports useQueue
+// module-level state — shared across every component that imports useQueue
 const queue = ref([])
 
 export function useQueue() {
@@ -16,7 +16,7 @@ export function useQueue() {
         console.log('queue: removed index', index, '| remaining:', queue.value.length)
     }
 
-    // Pop the first item — used by nextSong to consume the queue
+    // pop the first item — used by nextSong to consume the queue
     const shiftQueue = () => {
         if (queue.value.length === 0) return null
         const song = queue.value.shift()

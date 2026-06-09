@@ -9,7 +9,7 @@ import { songs } from '../data/songlist'
 
         <div class="max-w-5xl mx-auto">
 
-            <!-- Page header -->
+            <!-- page header -->
             <div class="flex items-end justify-between px-5 pt-10 pb-4">
                 <h1 class="text-[3.2rem] leading-none font-black tracking-[-0.04em]">
                     Videos
@@ -19,7 +19,7 @@ import { songs } from '../data/songlist'
                 </span>
             </div>
 
-            <!-- Video grid -->
+            <!-- video grid -->
             <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25] px-5 py-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#E2DDD4] dark:bg-[#2E2B25]">
                     <RouterLink
@@ -37,7 +37,7 @@ import { songs } from '../data/songlist'
                                 loading="lazy"
                                 class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-400"
                             />
-                            <!-- Play overlay -->
+                            <!-- play overlay -->
                             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
                                 <div class="w-12 h-12 bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-5 h-5 ml-0.5">
@@ -45,13 +45,13 @@ import { songs } from '../data/songlist'
                                     </svg>
                                 </div>
                             </div>
-                            <!-- Index badge -->
+                            <!-- index badge -->
                             <span class="absolute top-2 left-2 text-xs font-bold tabular-nums text-white/60">
                                 {{ String(i + 1).padStart(2, '0') }}
                             </span>
                         </div>
 
-                        <!-- Info -->
+                        <!-- info -->
                         <div class="px-4 py-3">
                             <p class="text-base font-semibold text-[#1A1916] dark:text-[#EDE9DF] truncate leading-snug">
                                 {{ song.title }}

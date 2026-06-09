@@ -10,7 +10,7 @@ import { songs } from '../data/songlist'
 
         <div class="max-w-5xl mx-auto">
 
-            <!-- Page header -->
+            <!-- page header -->
             <div class="flex items-end justify-between px-5 pt-10 pb-4">
                 <h1 class="text-[3.2rem] leading-none font-black tracking-[-0.04em]">
                     Trending
@@ -20,19 +20,19 @@ import { songs } from '../data/songlist'
                 </span>
             </div>
 
-            <!-- Featured song -->
+            <!-- featured song -->
             <RouterLink
                 :to="`/song/${songs[0].id}`"
                 class="group flex items-stretch border-t border-b border-[#E2DDD4] dark:border-[#2E2B25] hover:bg-[#F2EDE3] dark:hover:bg-[#1E1C19] transition-colors"
             >
-                <!-- Art -->
+                <!-- art -->
                 <img
                     :src="songs[0].cover"
                     :alt="songs[0].title"
                     class="w-24 h-24 object-cover shrink-0 self-center ml-5 my-4"
                 />
 
-                <!-- Info -->
+                <!-- info -->
                 <div class="flex-1 min-w-0 px-5 py-4 flex flex-col justify-center">
                     <p class="text-xs font-bold tracking-[0.15em] uppercase text-[var(--accent)] mb-1">
                         Featured
@@ -45,13 +45,13 @@ import { songs } from '../data/songlist'
                     </p>
                 </div>
 
-                <!-- Play cue -->
+                <!-- play cue -->
                 <div class="flex items-center pr-6 opacity-0 group-hover:opacity-100 transition-opacity">
                     <span class="text-sm font-bold tracking-widest text-[var(--accent)]">PLAY →</span>
                 </div>
             </RouterLink>
 
-            <!-- Column headers -->
+            <!-- column headers -->
             <div class="flex items-center gap-4 px-5 pt-5 pb-2">
                 <span class="w-6" />
                 <span class="w-11 shrink-0" />
@@ -63,7 +63,7 @@ import { songs } from '../data/songlist'
                 </span>
             </div>
 
-            <!-- Tracklist -->
+            <!-- tracklist -->
             <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25]">
                 <SongCard
                     v-for="(song, i) in songs"

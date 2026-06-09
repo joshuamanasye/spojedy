@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { songs } from '../data/songlist'
 import { useQueue } from './useQueue'
 
-// ── Singleton — one Audio instance for the entire app lifetime ───────────────
+// singleton — one Audio instance for the entire app lifetime
 const audio = new Audio()
 const currentSong = ref(null)
 const isPlaying = ref(false)
@@ -11,39 +11,42 @@ const duration = ref(0)
 const volume = ref(1)
 const pct = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0))
 
-// Pull shiftQueue from the shared queue composable (module-level call is fine —
+// pull shiftQueue from the shared queue composable (module-level call is fine —
 // ref/computed don't need a component context in Vue 3)
 const { shiftQueue } = useQueue()
 
-// ── Private helpers ──────────────────────────────────────────────────────────
+// private helpers
 function _load(song, autoPlay) {
+    console.log('player: load', song.title, 'autoplay?', autoPlay)
     currentSong.value = song
     audio.src = song.audio
     audio.currentTime = 0
     currentTime.value = 0
     duration.value = 0
-    if (autoPlay) audio.play().catch(() => {})
+    if (autoPlay) audio.play().catch(err => console.log('play blocked?', err))
 }
 
 function _nextSong(autoPlay) {
     if (!currentSong.value) return
     const queued = shiftQueue()
     const idx = songs.findIndex(s => s.id === currentSong.value.id)
+    if (queued) console.log('player: next from queue ->', queued.title)
+    else console.log('player: next sequential, idx was', idx)
     _load(queued || songs[(idx + 1) % songs.length], autoPlay)
 }
 
-// ── Wire audio events once ───────────────────────────────────────────────────
+// wire audio events once
 audio.volume = volume.value
 audio.addEventListener('timeupdate',    () => { currentTime.value = audio.currentTime })
 audio.addEventListener('loadedmetadata',() => { duration.value = audio.duration || 0 })
 audio.addEventListener('play',          () => { isPlaying.value = true })
 audio.addEventListener('pause',         () => { isPlaying.value = false })
-audio.addEventListener('ended',         () => { _nextSong(true) })
+audio.addEventListener('ended',         () => { console.log('player: ended, auto next'); _nextSong(true) })
 
-// ── Public composable ────────────────────────────────────────────────────────
+// public composable
 export function usePlayer() {
     return {
-        // State (refs — auto-unwrapped in templates)
+        // state (refs — auto-unwrapped in templates)
         currentSong,
         isPlaying,
         currentTime,
@@ -51,13 +54,13 @@ export function usePlayer() {
         volume,
         pct,
 
-        // Helpers
+        // helpers
         fmt(t) {
             if (!t || isNaN(t)) return '0:00'
             return `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`
         },
 
-        // Load a song into the player (autoPlay = false by default so navigating
+        // load a song into the player (autoPlay = false by default so navigating
         // to a song detail page doesn't auto-start unless music was already playing)
         loadSong(song, autoPlay = false) { _load(song, autoPlay) },
 
@@ -66,13 +69,16 @@ export function usePlayer() {
             isPlaying.value ? audio.pause() : audio.play().catch(() => {})
         },
 
-        // Called by MusicVideoDetail when the video starts — pauses music.
-        // Music won't resume automatically; user must click play again.
+        // called by MusicVideoDetail when the video starts — pauses music.
+        // music won't resume automatically; user must click play again.
         pauseForVideo() {
-            if (isPlaying.value) audio.pause()
+            if (isPlaying.value) {
+                console.log('player: paused for video')
+                audio.pause()
+            }
         },
 
-        // Advance (respects the queue, then falls through to sequential list)
+        // advance (respects the queue, then falls through to sequential list)
         nextSong() { _nextSong(isPlaying.value) },
 
         prevSong() {

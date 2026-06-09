@@ -19,12 +19,12 @@ onMounted(() => {
     <nav class="sticky top-0 z-50 bg-[#F9F8F4] dark:bg-[#141310] border-b border-[#E2DDD4] dark:border-[#2E2B25]">
         <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between gap-8">
 
-            <!-- Brand -->
+            <!-- brand -->
             <RouterLink to="/" class="font-black text-base tracking-[-0.03em] text-[#1A1916] dark:text-[#EDE9DF] shrink-0">
                 SPOJEDY
             </RouterLink>
 
-            <!-- Nav links -->
+            <!-- nav links -->
             <div class="flex items-center gap-6 text-sm font-medium tracking-wide">
                 <RouterLink
                     to="/"
@@ -49,7 +49,7 @@ onMounted(() => {
                 </RouterLink>
             </div>
 
-            <!-- User -->
+            <!-- user -->
             <RouterLink to="/profile" class="flex items-center gap-2 group shrink-0">
                 <img
                     :src="profileImage"

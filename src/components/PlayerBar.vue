@@ -10,15 +10,15 @@ const { queue, queueLength, removeFromQueue, clearQueue, moveUp, moveDown } = us
 const { currentSong, isPlaying, currentTime, duration, volume, pct, fmt,
         togglePlay, nextSong, prevSong, setProgress, changeVolume } = player
 
-// Open by default so the queue is always visible on first load
+// open by default so the queue is always visible on first load
 const showQueue = ref(true)
 </script>
 
 <template>
-    <!-- Always rendered on eligible pages (no v-if on currentSong) -->
+    <!-- always rendered on eligible pages (no v-if on currentSong) -->
     <div class="fixed bottom-0 left-0 right-0 z-40">
 
-        <!-- ── Queue panel — fixed right overlay, stops above the bar ── -->
+        <!-- ── queue panel — fixed right overlay, stops above the bar ── -->
         <Transition name="queue-slide">
             <div
                 v-if="showQueue"
@@ -27,7 +27,7 @@ const showQueue = ref(true)
                        border-l border-[#E2DDD4] dark:border-[#2E2B25]
                        shadow-[-8px_0_24px_rgba(0,0,0,0.07)]"
             >
-                <!-- Panel header -->
+                <!-- panel header -->
                 <div class="flex items-center justify-between px-5 py-4 border-b border-[#E2DDD4] dark:border-[#2E2B25] shrink-0">
                     <h2 class="text-xs font-bold tracking-[0.15em] uppercase text-[#8A8679] dark:text-[#7A7870]">
                         Up Next
@@ -53,7 +53,7 @@ const showQueue = ref(true)
                     </div>
                 </div>
 
-                <!-- Panel body (scrollable) -->
+                <!-- panel body (scrollable) -->
                 <div class="flex-1 overflow-y-auto">
                     <div v-if="queueLength === 0" class="py-12 text-center px-5">
                         <p class="text-sm text-[#8A8679] dark:text-[#7A7870]">Queue is empty</p>
@@ -92,34 +92,34 @@ const showQueue = ref(true)
             </div>
         </Transition>
 
-        <!-- ── Main bar — z-[60] sits above the z-50 queue panel ── -->
+        <!-- ── main bar — z-[60] sits above the z-50 queue panel ── -->
         <div class="relative z-[60] bg-[#F9F8F4] dark:bg-[#141310] border-t border-[#E2DDD4] dark:border-[#2E2B25]">
 
-            <!-- Thin progress line — only when a song is loaded.
-                 Single h-1 element: no transparent wrapper, no thickness issue. -->
+            <!-- thin progress line — only when a song is loaded.
+                 single h-1 element: no transparent wrapper, no thickness issue. -->
             <div
                 v-if="currentSong"
                 class="relative w-full h-1 cursor-pointer group"
                 @click="setProgress"
             >
-                <!-- Track fill -->
+                <!-- track fill -->
                 <div class="absolute inset-0 bg-[#E2DDD4] dark:bg-[#2E2B25]">
                     <div
                         class="absolute top-0 left-0 h-full bg-[#1A1916] dark:bg-[#EDE9DF] transition-none"
                         :style="{ width: pct + '%' }"
                     />
                 </div>
-                <!-- Seek dot (extends above/below on hover) -->
+                <!-- seek dot (extends above/below on hover) -->
                 <div
                     class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[var(--accent)] -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     :style="{ left: pct + '%' }"
                 />
             </div>
 
-            <!-- Controls row -->
+            <!-- controls row -->
             <div class="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
 
-                <!-- ── Song info (flex-1 on mobile, fixed w on desktop) ── -->
+                <!-- ── song info (flex-1 on mobile, fixed w on desktop) ── -->
                 <div class="flex-1 sm:flex-none sm:w-56 min-w-0">
                     <button
                         v-if="currentSong"
@@ -144,14 +144,14 @@ const showQueue = ref(true)
                             </p>
                         </div>
                     </button>
-                    <!-- Placeholder when nothing is loaded -->
+                    <!-- placeholder when nothing is loaded -->
                     <p v-else class="text-xs text-[#8A8679] dark:text-[#7A7870] select-none">
                         Nothing playing
                     </p>
                 </div>
 
-                <!-- ── Playback controls ── -->
-                <!-- Prev hidden on mobile, visible on sm+ -->
+                <!-- ── playback controls ── -->
+                <!-- prev hidden on mobile, visible on sm+ -->
                 <div class="flex items-center gap-2 sm:flex-1 sm:justify-center">
                     <button
                         @click="prevSong"
@@ -194,9 +194,9 @@ const showQueue = ref(true)
                     </span>
                 </div>
 
-                <!-- ── Volume + queue toggle ── -->
+                <!-- ── volume + queue toggle ── -->
                 <div class="flex items-center gap-2 sm:w-56 sm:justify-end shrink-0">
-                    <!-- Volume: desktop only -->
+                    <!-- volume: desktop only -->
                     <div class="hidden md:flex items-center gap-2 w-28">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 shrink-0 text-[#8A8679] dark:text-[#7A7870]">
                             <path d="M18.5 12A4.5 4.5 0 0 0 16 8v8a4.5 4.5 0 0 0 2.5-4zM5 9v6h4l5 5V4L9 9H5z" />
@@ -209,7 +209,7 @@ const showQueue = ref(true)
                         />
                     </div>
 
-                    <!-- Queue toggle icon -->
+                    <!-- queue toggle icon -->
                     <button
                         @click="showQueue = !showQueue"
                         class="relative w-9 h-9 flex items-center justify-center border transition-colors cursor-pointer"

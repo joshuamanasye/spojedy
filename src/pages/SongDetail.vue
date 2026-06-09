@@ -9,38 +9,41 @@ import { usePlayer } from '../composables/usePlayer'
 const route = useRoute()
 const router = useRouter()
 
-// ── Queue ────────────────────────────────────────────────────────────────────
+// queue
 const { queue, queueLength, addToQueue, removeFromQueue, shiftQueue, clearQueue, moveUp, moveDown } = useQueue()
 
-// ── Global player ────────────────────────────────────────────────────────────
+// global player
 const { currentSong: playerSong, isPlaying, currentTime, duration, volume,
         pct, fmt, loadSong, togglePlay, setProgress, changeVolume } = usePlayer()
 
-// ── Route-derived song (used for display) ────────────────────────────────────
+// route-derived song (used for display)
 const songId = computed(() => Number(route.params.id))
 const currentIndex = computed(() => songs.findIndex(s => s.id === songId.value))
 const currentSong = computed(() => songs[currentIndex.value])
 
-// ── Sync route → player ───────────────────────────────────────────────────────
+// sync route → player
 watch(songId, (id) => {
     const song = songs.find(s => s.id === id)
     if (song && (!playerSong.value || playerSong.value.id !== id)) {
+        console.log('detail: route changed, loading', id)
         loadSong(song, isPlaying.value)
     }
 }, { immediate: true })
 
-// When the player auto-advances (song ended), navigate so this page stays in sync
+// when the player auto-advances (song ended), navigate so this page stays in sync
 watch(playerSong, (newSong) => {
     if (newSong && newSong.id !== songId.value) {
+        console.log('detail: player moved on, push to', newSong.id)
         router.push(`/song/${newSong.id}`)
     }
 })
 
-// ── Manual prev / next ────────────────────────────────────────────────────────
+// manual prev / next
 const nextSong = () => {
     const wasPlaying = isPlaying.value
     const queued = shiftQueue()
     const next = queued || songs[(currentIndex.value + 1) % songs.length]
+    console.log('detail: next ->', next.title)
     loadSong(next, wasPlaying)
 }
 
@@ -48,7 +51,7 @@ const prevSong = () => {
     loadSong(songs[(currentIndex.value - 1 + songs.length) % songs.length], isPlaying.value)
 }
 
-// ── Misc UI state ─────────────────────────────────────────────────────────────
+// misc UI state
 const zoomLevel = ref(1)
 const showQueue = ref(true)
 const toasted = ref(false)
@@ -70,11 +73,11 @@ function handleAddToQueue() {
     <div class="min-h-screen bg-[#F9F8F4] dark:bg-[#141310] text-[#1A1916] dark:text-[#EDE9DF]">
         <ComponentNavbar />
 
-        <!-- Main content — always full width; queue is a fixed overlay -->
+        <!-- main content — always full width; queue is a fixed overlay -->
         <div class="max-w-5xl mx-auto px-5 py-10">
             <div class="flex flex-col md:flex-row gap-10 md:gap-14 items-start">
 
-                <!-- Album art -->
+                <!-- album art -->
                 <div class="md:w-80 md:shrink-0 w-full">
                     <div class="relative w-full md:w-80 aspect-square overflow-hidden">
                         <img
@@ -96,10 +99,10 @@ function handleAddToQueue() {
                     </p>
                 </div>
 
-                <!-- Controls column -->
+                <!-- controls column -->
                 <div class="flex-1 min-w-0 pt-1">
 
-                    <!-- Title + artist -->
+                    <!-- title + artist -->
                     <h1 class="text-4xl md:text-5xl font-black tracking-tight leading-none">
                         {{ currentSong.title }}
                     </h1>
@@ -107,7 +110,7 @@ function handleAddToQueue() {
                         {{ currentSong.artist }}
                     </p>
 
-                    <!-- Progress bar -->
+                    <!-- progress bar -->
                     <div class="mt-8">
                         <div
                             class="relative w-full h-5 flex items-center cursor-pointer group"
@@ -130,7 +133,7 @@ function handleAddToQueue() {
                         </div>
                     </div>
 
-                    <!-- Play controls -->
+                    <!-- play controls -->
                     <div class="flex items-center gap-5 mt-6">
                         <button
                             @click="prevSong"
@@ -166,7 +169,7 @@ function handleAddToQueue() {
                         </button>
                     </div>
 
-                    <!-- Volume -->
+                    <!-- volume -->
                     <div class="flex items-center gap-3 mt-5 max-w-xs">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 shrink-0 text-[#8A8679] dark:text-[#7A7870]">
                             <path d="M18.5 12A4.5 4.5 0 0 0 16 8v8a4.5 4.5 0 0 0 2.5-4zM5 9v6h4l5 5V4L9 9H5z" />
@@ -182,10 +185,10 @@ function handleAddToQueue() {
                         </svg>
                     </div>
 
-                    <!-- Bottom action row -->
+                    <!-- bottom action row -->
                     <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25] mt-8 pt-5 flex items-center gap-3">
 
-                        <!-- Add to queue — icon only ('+') -->
+                        <!-- add to queue — icon only ('+') -->
                         <button
                             @click="handleAddToQueue"
                             :title="toasted ? 'Added to queue!' : 'Add to queue'"
@@ -199,7 +202,7 @@ function handleAddToQueue() {
                             </svg>
                         </button>
 
-                        <!-- Show queue — icon only (3 lines + count badge) -->
+                        <!-- show queue — icon only (3 lines + count badge) -->
                         <button
                             @click="showQueue = !showQueue"
                             :title="showQueue ? 'Hide queue' : 'Show queue'"
@@ -217,7 +220,7 @@ function handleAddToQueue() {
                             >{{ queueLength }}</span>
                         </button>
 
-                        <!-- Watch music video — pushed to the right -->
+                        <!-- watch music video — pushed to the right -->
                         <button
                             @click="$router.push(`/video/${currentSong.id}`)"
                             class="ml-auto cursor-pointer text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors"
@@ -230,13 +233,13 @@ function handleAddToQueue() {
             </div>
         </div>
 
-        <!-- ── Queue panel — fixed right overlay ─────────────────────────── -->
+        <!-- ── queue panel — fixed right overlay ─────────────────────────── -->
         <Transition name="queue-slide">
             <div
                 v-if="showQueue"
                 class="fixed top-14 right-0 bottom-0 w-full sm:w-[26rem] z-50 flex flex-col bg-[#F9F8F4] dark:bg-[#141310] border-l border-[#E2DDD4] dark:border-[#2E2B25] shadow-[-8px_0_24px_rgba(0,0,0,0.07)]"
             >
-                <!-- Panel header -->
+                <!-- panel header -->
                 <div class="flex items-center justify-between px-5 py-4 border-b border-[#E2DDD4] dark:border-[#2E2B25] shrink-0">
                     <h2 class="text-xs font-bold tracking-[0.15em] uppercase text-[#8A8679] dark:text-[#7A7870]">
                         Up Next
@@ -262,16 +265,16 @@ function handleAddToQueue() {
                     </div>
                 </div>
 
-                <!-- Panel body (scrollable) -->
+                <!-- panel body (scrollable) -->
                 <div class="flex-1 overflow-y-auto">
 
-                    <!-- Empty state -->
+                    <!-- empty state -->
                     <div v-if="queueLength === 0" class="py-12 text-center px-5">
                         <p class="text-sm text-[#8A8679] dark:text-[#7A7870]">Queue is empty</p>
                         <p class="text-xs text-[#8A8679]/60 dark:text-[#7A7870]/60 mt-1">Add songs from the tracklist</p>
                     </div>
 
-                    <!-- Queue list -->
+                    <!-- queue list -->
                     <ul v-else>
                         <li
                             v-for="(song, i) in queue"
@@ -304,7 +307,7 @@ function handleAddToQueue() {
             </div>
         </Transition>
 
-        <!-- ── Bootstrap Modal: fullscreen album art ── -->
+        <!-- ── bootstrap Modal: fullscreen album art ── -->
         <div class="modal fade" id="artModal" tabindex="-1" data-bs-theme="dark" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0" style="background: rgba(20,19,16,0.97);">
@@ -332,7 +335,7 @@ function handleAddToQueue() {
 </template>
 
 <style scoped>
-/* Slide in from the right */
+/* slide in from the right */
 .queue-slide-enter-active { transition: transform 0.22s ease, opacity 0.22s ease; }
 .queue-slide-leave-active { transition: transform 0.16s ease, opacity 0.16s ease; }
 .queue-slide-enter-from   { transform: translateX(100%); opacity: 0; }

@@ -11,6 +11,7 @@ const { addToQueue } = useQueue()
 const toasted = ref(false)
 
 function handleAddToQueue(e, song) {
+    // stop the RouterLink from navigating when the + is clicked
     e.preventDefault()
     e.stopPropagation()
     addToQueue(song)
@@ -19,11 +20,11 @@ function handleAddToQueue(e, song) {
 }
 </script>
 
-<!-- Tracklist row — not a card -->
+<!-- tracklist row — not a card -->
 <template>
     <RouterLink :to="`/song/${song.id}`" class="group flex items-center gap-4 px-5 py-4 border-b border-[#E2DDD4] dark:border-[#2E2B25] hover:bg-[#F2EDE3] dark:hover:bg-[#1E1C19] transition-colors">
 
-        <!-- Index / play indicator -->
+        <!-- index / play indicator -->
         <span class="w-6 text-right text-sm tabular-nums text-[#8A8679] dark:text-[#7A7870] shrink-0 group-hover:hidden">
             {{ String(index + 1).padStart(2, '0') }}
         </span>
@@ -43,17 +44,17 @@ function handleAddToQueue(e, song) {
             class="w-11 h-11 object-cover shrink-0"
         />
 
-        <!-- Title -->
+        <!-- title -->
         <p class="flex-1 min-w-0 text-base font-semibold text-[#1A1916] dark:text-[#EDE9DF] truncate">
             {{ song.title }}
         </p>
 
-        <!-- Artist -->
+        <!-- artist -->
         <p class="hidden md:block text-sm text-[#8A8679] dark:text-[#7A7870] shrink-0 w-44 truncate">
             {{ song.artist }}
         </p>
 
-        <!-- Add-to-queue button — icon only -->
+        <!-- add-to-queue button — icon only -->
         <button
             @click="handleAddToQueue($event, song)"
             :title="toasted ? 'Added to queue!' : 'Add to queue'"
