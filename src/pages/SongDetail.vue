@@ -50,7 +50,7 @@ const prevSong = () => {
 
 // ── Misc UI state ─────────────────────────────────────────────────────────────
 const zoomLevel = ref(1)
-const showQueue = ref(false)
+const showQueue = ref(true)
 const toasted = ref(false)
 
 const openArtModal = () => {
@@ -184,18 +184,12 @@ function handleAddToQueue() {
 
                     <!-- Bottom action row -->
                     <div class="border-t border-[#E2DDD4] dark:border-[#2E2B25] mt-8 pt-5 flex items-center gap-3">
-                        <button
-                            @click="$router.push(`/video/${currentSong.id}`)"
-                            class="cursor-pointer text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors"
-                        >
-                            Watch music video →
-                        </button>
 
                         <!-- Add to queue — icon only ('+') -->
                         <button
                             @click="handleAddToQueue"
                             :title="toasted ? 'Added to queue!' : 'Add to queue'"
-                            class="ml-auto w-9 h-9 flex items-center justify-center border transition-colors cursor-pointer"
+                            class="w-9 h-9 flex items-center justify-center border transition-colors cursor-pointer"
                             :class="toasted
                                 ? 'border-[var(--accent)] text-[var(--accent)]'
                                 : 'border-[#E2DDD4] dark:border-[#2E2B25] text-[#8A8679] dark:text-[#7A7870] hover:border-[#1A1916] dark:hover:border-[#EDE9DF] hover:text-[#1A1916] dark:hover:text-[#EDE9DF]'"
@@ -222,6 +216,14 @@ function handleAddToQueue() {
                                 class="absolute -top-1.5 -right-1.5 bg-[var(--accent)] text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold leading-none"
                             >{{ queueLength }}</span>
                         </button>
+
+                        <!-- Watch music video — pushed to the right -->
+                        <button
+                            @click="$router.push(`/video/${currentSong.id}`)"
+                            class="ml-auto cursor-pointer text-sm font-medium tracking-wide text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors"
+                        >
+                            Watch music video →
+                        </button>
                     </div>
 
                 </div>
@@ -232,7 +234,7 @@ function handleAddToQueue() {
         <Transition name="queue-slide">
             <div
                 v-if="showQueue"
-                class="fixed top-14 right-0 bottom-0 w-72 z-50 flex flex-col bg-[#F9F8F4] dark:bg-[#141310] border-l border-[#E2DDD4] dark:border-[#2E2B25] shadow-[-12px_0_32px_rgba(0,0,0,0.06)]"
+                class="fixed top-14 right-0 bottom-0 w-full sm:w-[26rem] z-50 flex flex-col bg-[#F9F8F4] dark:bg-[#141310] border-l border-[#E2DDD4] dark:border-[#2E2B25] shadow-[-8px_0_24px_rgba(0,0,0,0.07)]"
             >
                 <!-- Panel header -->
                 <div class="flex items-center justify-between px-5 py-4 border-b border-[#E2DDD4] dark:border-[#2E2B25] shrink-0">
@@ -246,7 +248,7 @@ function handleAddToQueue() {
                             @click="clearQueue"
                             class="text-[10px] tracking-wide font-medium text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors cursor-pointer"
                         >
-                            Clear all
+                            Clear
                         </button>
                         <button
                             @click="showQueue = false"
@@ -276,24 +278,24 @@ function handleAddToQueue() {
                             :key="i"
                             class="group flex items-center gap-3 px-5 py-3 border-b border-[#E2DDD4] dark:border-[#2E2B25] last:border-b-0"
                         >
-                            <span class="text-xs tabular-nums text-[#8A8679] dark:text-[#7A7870] w-4 shrink-0">{{ i + 1 }}</span>
-                            <img :src="song.cover" :alt="song.title" class="w-9 h-9 object-cover shrink-0" />
-                            <div class="flex-1 min-w-0">
+                            <span class="text-xs tabular-nums text-[#8A8679] dark:text-[#7A7870] w-5 shrink-0">{{ i + 1 }}</span>
+                            <img :src="song.cover" :alt="song.title" class="w-10 h-10 object-cover shrink-0" />
+                            <div class="flex-1 min-w-0 pr-1">
                                 <p class="text-sm font-semibold text-[#1A1916] dark:text-[#EDE9DF] truncate leading-tight">{{ song.title }}</p>
                                 <p class="text-xs text-[#8A8679] dark:text-[#7A7870] truncate mt-0.5">{{ song.artist }}</p>
                             </div>
-                            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                            <div class="hidden group-hover:flex items-center gap-1 shrink-0">
                                 <button @click="moveUp(i)" :disabled="i === 0"
-                                    class="w-6 h-6 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] disabled:opacity-25 disabled:cursor-not-allowed transition-colors" title="Move up">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path d="M12 8l-6 6h12z"/></svg>
+                                    class="w-7 h-7 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] disabled:opacity-25 disabled:cursor-not-allowed transition-colors" title="Move up">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M12 8l-6 6h12z"/></svg>
                                 </button>
                                 <button @click="moveDown(i)" :disabled="i === queue.length - 1"
-                                    class="w-6 h-6 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] disabled:opacity-25 disabled:cursor-not-allowed transition-colors" title="Move down">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path d="M12 16l6-6H6z"/></svg>
+                                    class="w-7 h-7 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[#1A1916] dark:hover:text-[#EDE9DF] disabled:opacity-25 disabled:cursor-not-allowed transition-colors" title="Move down">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M12 16l6-6H6z"/></svg>
                                 </button>
                                 <button @click="removeFromQueue(i)"
-                                    class="w-6 h-6 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors" title="Remove">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                                    class="w-7 h-7 flex items-center justify-center cursor-pointer text-[#8A8679] dark:text-[#7A7870] hover:text-[var(--accent)] transition-colors" title="Remove">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
                                 </button>
                             </div>
                         </li>

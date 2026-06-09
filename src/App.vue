@@ -12,8 +12,8 @@ const showPlayerBar = computed(() =>
     !route.path.match(/^\/(song|video)\//)
 )
 
-// Add bottom padding when the bar is visible and has a song loaded
-const hasBar = computed(() => showPlayerBar.value && currentSong.value)
+// Always pad when the bar is present (bar renders even with no song loaded)
+const hasBar = computed(() => showPlayerBar.value)
 
 onMounted(() => {
     const saved = localStorage.getItem('theme')
@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div :class="hasBar ? 'pb-28' : ''">
+    <div :class="hasBar ? 'pb-20' : ''">
         <router-view />
     </div>
     <PlayerBar v-if="showPlayerBar" />
